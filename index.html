@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>US Lung Go-Live Kit</title>
+<meta name="description" content="Independent concept by Aditya Mathur: how to take Qure.ai's lung nodule program live at a US health system, with a phase plan, IT and integration checklist, risk register, tested AI agent instructions, SQL and buyer narratives.">
+<style>
+:root{
+  --bg:#f7f7f5; --surface:#ffffff; --ink:#1a1d23; --muted:#5b6270; --line:#e3e4e8;
+  --accent:#1d5fa8; --accent-soft:#e6eef9; --good:#18794e; --good-soft:#e6f4ec;
+  --warn:#9a5b00; --warn-soft:#fbf1dd; --bad:#b42318; --bad-soft:#fdeceb;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1115; --surface:#171a21; --ink:#e8eaee; --muted:#9aa1ad; --line:#2a2f3a;
+    --accent:#7fb2f0; --accent-soft:#16233a; --good:#4cc38a; --good-soft:#12291e;
+    --warn:#e0a53c; --warn-soft:#2b2210; --bad:#f07167; --bad-soft:#2d1614;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1115; --surface:#171a21; --ink:#e8eaee; --muted:#9aa1ad; --line:#2a2f3a;
+  --accent:#7fb2f0; --accent-soft:#16233a; --good:#4cc38a; --good-soft:#12291e;
+  --warn:#e0a53c; --warn-soft:#2b2210; --bad:#f07167; --bad-soft:#2d1614;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;}
+.wrap{max-width:900px;margin:0 auto;padding:40px 16px 80px}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:0 0 12px;letter-spacing:-.01em}
+h2{font-size:22px;margin:56px 0 12px;padding-top:8px;letter-spacing:-.005em}
+h3{font-size:17px;margin:28px 0 8px}
+p{margin:0 0 14px}
+a{color:var(--accent)}
+.lede{font-size:18px;color:var(--muted);margin-bottom:20px}
+.meta{font-size:14px;color:var(--muted);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0;margin:20px 0 28px;display:flex;flex-wrap:wrap;gap:6px 18px}
+.note{font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.tldr{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card .label{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.card p{margin:0;font-size:15px}
+ul,ol{padding-left:22px;margin:0 0 14px}
+li{margin:4px 0}
+.tbl{width:100%;overflow-x:auto;margin:10px 0 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap}
+.p-good{background:var(--good-soft);color:var(--good)} .p-warn{background:var(--warn-soft);color:var(--warn)} .p-bad{background:var(--bad-soft);color:var(--bad)} .p-acc{background:var(--accent-soft);color:var(--accent)}
+.flow{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.num{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:13px}
+.step p{margin:0;font-size:15px}
+.step .t{font-weight:600;margin-bottom:2px}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;font-size:13px;line-height:1.5;margin:8px 0 18px;white-space:pre}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em}
+p code, li code, td code{background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:5px}
+.grader{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px 0}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}
+select,textarea,input[type=file]{width:100%;font:inherit;font-size:14px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+textarea{min-height:130px;resize:vertical}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+button{font:inherit;font-size:14px;border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:999px;padding:6px 14px;cursor:pointer}
+button.primary{background:var(--accent);color:#fff}
+:root[data-theme="dark"] button.primary{color:#0f1115}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.primary{color:#0f1115}}
+button:hover{opacity:.9}
+.case-box{font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.case-box .msg{font-size:15px;margin-bottom:8px}
+.kv{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--muted);white-space:pre-wrap;word-break:break-word}
+.checks{list-style:none;padding:0;margin:10px 0 0}
+.checks li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.checks li:last-child{border-bottom:none}
+.verdict{font-size:15px;font-weight:700;margin-top:10px}
+.why{background:var(--accent-soft);border-radius:12px;padding:18px 20px;margin-top:40px}
+.why h2{margin-top:0}
+footer{margin-top:48px;font-size:13px;color:var(--muted)}
+.small{font-size:13px;color:var(--muted)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0}
+summary{cursor:pointer;font-weight:600}
+@media (max-width:760px){
+  .tldr{grid-template-columns:1fr}
+  .row2{grid-template-columns:1fr}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+
+<p class="kicker">Independent product concept · Aditya Mathur · Sep 2026</p>
+<h1>Taking a lung nodule program live at a US health system: a go-live kit</h1>
+<p class="lede">How I would run a US site deployment for Qure.ai's lung cancer solution, from IT approvals to stabilization, plus tested instructions for the AI agent that turns radiology reports into follow-up tasks.</p>
+
+<div class="meta">
+  <span>Built for: Product Manager, US Lung Cancer Solution, Qure.ai (Bengaluru)</span>
+  <span>Inside: phase plan · IT and integration checklist · risk register · agent instructions + 18 tests · SQL · buyer narratives</span>
+  <span><a href="#grader">Jump to the agent tester</a></span>
+</div>
+
+<p class="note">Independent work. Not affiliated with Qure.ai, and no internal information was used. Product facts come from Qure.ai's public pages. The two hospitals, their rules and all radiology report snippets are <strong>fictional</strong>, written by me for testing. Nothing here is clinical advice: the agent never decides care, it only routes what the radiologist wrote.</p>
+
+<div class="tldr">
+  <div class="card"><div class="label">The problem</div><p>Qure.ai's own US content cites that 30 to 50% of patients with incidental lung nodules never get the recommended follow-up. Detection alone doesn't fix that. A site only gets value once follow-up actually happens.</p></div>
+  <div class="card"><div class="label">The job</div><p>Get each US site from signed contract to a stable program fast: IT approvals, DICOM and HL7 flowing, navigators using the worklist, and agents behaving the way that site needs.</p></div>
+  <div class="card"><div class="label">The kit</div><p>A phase plan with exit criteria, the checklists that usually stall, a risk register, site-specific agent instructions with a working tester, and the SQL I'd watch every morning.</p></div>
+</div>
+
+<h2>1. The deployment path, with exit criteria</h2>
+<p>Every phase ends with a check that someone signs off. A phase is done when its exit criteria are met, not when the calendar says so.</p>
+<div class="tbl"><table>
+<thead><tr><th>Phase</th><th>What happens</th><th>Exit criteria</th><th>Site owners</th></tr></thead>
+<tbody>
+<tr><td><strong>1. Pre-deployment planning</strong></td><td>Stakeholder map, scope (which sites, modalities, study types), success criteria and baseline agreed, project plan shared</td><td>Signed scope; baseline follow-up completion rate and time from report to navigator contact captured</td><td>Radiology lead, nurse navigator lead, IT project manager, clinical champion</td></tr>
+<tr><td><strong>2. IT approvals</strong></td><td>Security and vendor risk review, BAA, data flow diagram, network design (on-site gateway or cloud), PHI handling</td><td>Security sign-off, BAA executed, network path approved</td><td>CISO / IT security, privacy officer, compliance</td></tr>
+<tr><td><strong>3. Integration readiness</strong></td><td>DICOM routing rules, results back to PACS, HL7 feeds for orders and reports, worklist setup, test with test patients</td><td>Test studies route end to end; results show in PACS; report text arrives for every test accession</td><td>PACS admin, interface (HL7) team</td></tr>
+<tr><td><strong>4. Go-live</strong></td><td>Go / no-go review, switch to production routing, hypercare with named on-call on both sides</td><td>Capture rate and delivery rate at target for the first 3 days</td><td>All of the above, plus Qure support on-call</td></tr>
+<tr><td><strong>5. Stabilization</strong></td><td>Daily health checks, tune routing and agent rules, navigator feedback loop, first value review</td><td>Two clean weeks on the health metrics in section 5; navigators working from the worklist, not spreadsheets</td><td>Navigator lead, radiology lead</td></tr>
+</tbody></table></div>
+
+<h2>2. The checklist items that usually stall a go-live</h2>
+<h3>IT approvals</h3>
+<ul>
+  <li><strong>Security review:</strong> have the security questionnaire answers, architecture diagram and certifications (HIPAA, SOC 2 or ISO if held) ready before the first call. Waiting to be asked costs weeks.</li>
+  <li><strong>BAA:</strong> start it in parallel with the security review, not after it. Legal queues are the slowest part.</li>
+  <li><strong>Data flow diagram:</strong> one page showing exactly which PHI leaves the building, where it goes, and how long it stays.</li>
+  <li><strong>Network:</strong> decide on-site gateway versus cloud routing early; firewall change requests often have their own approval cycle.</li>
+</ul>
+<h3>Integration readiness</h3>
+<ul>
+  <li><strong>DICOM routing rules:</strong> list every study description the site uses for chest X-rays and chest CTs. Portable AP X-rays and CT abdomen studies that show the lung bases are the easiest to miss.</li>
+  <li><strong>Results back to PACS:</strong> confirm how the AI output shows up (secondary capture or structured report) and test it on the radiologists' actual viewing stations.</li>
+  <li><strong>HL7 feeds:</strong> the agent needs the final report text. Confirm addenda come through too, because an addendum can change the recommendation (test B1 below).</li>
+  <li><strong>Volume reconciliation:</strong> compare studies ordered in the RIS with studies Qure received, every day, per study type. This is the first metric I would watch (SQL query 1).</li>
+</ul>
+
+<h3>Risk register: early signals and what I'd do</h3>
+<div class="tbl"><table>
+<thead><tr><th>Risk</th><th>Early signal</th><th>Response</th></tr></thead>
+<tbody>
+<tr><td>Routing silently misses a study type</td><td>Capture rate below target for one study description</td><td>Daily RIS-vs-received check; fix the routing rule with the PACS admin the same day</td></tr>
+<tr><td>Security review stalls</td><td>No reply for 5 working days after questionnaire sent</td><td>Escalate through the clinical champion; offer a live walkthrough with our security lead</td></tr>
+<tr><td>Addenda missing from the HL7 feed</td><td>Agent tasks that contradict what radiologists later say</td><td>Test addenda before go-live; hold task creation until the report is final</td></tr>
+<tr><td>Navigators keep using spreadsheets</td><td>Low worklist logins, tasks closed in bulk</td><td>Sit with navigators in week 1; fix the top 3 friction points they name</td></tr>
+<tr><td>Alert fatigue for radiologists</td><td>Discordance reviews pile up unread</td><td>Tune the discordance threshold with the radiology lead; track review turnaround</td></tr>
+<tr><td>Time zone gap (Bengaluru to US)</td><td>Issues wait overnight during hypercare</td><td>Named US-hours on-call during hypercare; a written handover note at the end of each India day</td></tr>
+</tbody></table></div>
+
+<h2>3. Instructions an AI agent can follow, per site</h2>
+<p>The agent reads a finalized radiology report plus the AI finding and creates the right follow-up task for that site. The rule that matters most: <strong>the agent copies the radiologist's recommendation, it never makes one.</strong> If there is no clear recommendation, a person decides.</p>
+
+<h3>Two fictional sites, two configurations</h3>
+<pre id="siteText"></pre>
+
+<h3>Agent instructions v1.0 (versioned; every change is re-tested against all 18 cases)</h3>
+<pre id="promptText"></pre>
+
+<h3>Test set: 18 cases across 2 sites</h3>
+<p>Each case is a report snippet plus the AI finding. The hard ones are on purpose: an AI flag the report is silent on (A5), an addendum that changes the interval (B1), a recommendation with no time interval (A9), an oncology patient handled differently at each site (A6 vs B5), and a nodule the radiologist says needs no follow-up (A8).</p>
+<div class="tbl"><table id="caseTable">
+<thead><tr><th>ID</th><th>Site</th><th>Report snippet</th><th>AI flag</th><th>Correct action</th></tr></thead>
+<tbody></tbody></table></div>
+<div class="btns">
+  <button id="dlJsonl">Download test set (JSONL)</button>
+  <button id="dlTemplate">Download results template (CSV)</button>
+</div>
+
+<h2 id="grader">4. Test the agent's output</h2>
+<p>Pick a case, paste the agent's JSON output, and run the checks. The example outputs are written by hand to show what the checks catch.</p>
+<div class="grader">
+  <div class="row2">
+    <div>
+      <label for="caseSel">Test case</label>
+      <select id="caseSel"></select>
+      <div class="case-box" style="margin-top:10px">
+        <div class="msg" id="caseMsg"></div>
+        <div class="kv" id="caseCtx"></div>
+        <div class="small" style="margin-top:6px">Correct: <strong id="caseExp"></strong></div>
+      </div>
+    </div>
+    <div>
+      <label for="reply">Agent output (JSON)</label>
+      <textarea id="reply" placeholder='{"action": "...", "interval": null, "notify": [], "reason": "..."}'></textarea>
+      <div class="btns">
+        <button class="primary" id="runBtn">Run checks</button>
+        <button id="goodBtn">Load good example</button>
+        <button id="badBtn">Load bad example</button>
+      </div>
+    </div>
+  </div>
+  <div id="out"></div>
+</div>
+
+<h3>Batch mode: score a full run</h3>
+<p>Run all 18 cases through a model with instructions v1.0, save a CSV with columns <code>case_id,model,output</code>, and drop it here. Nothing leaves your browser.</p>
+<div class="grader">
+  <input type="file" id="csvIn" accept=".csv,text/csv">
+  <div id="batchOut" style="margin-top:12px"></div>
+</div>
+
+<h2>5. Stabilization: what I'd check every morning</h2>
+<div class="tbl"><table>
+<thead><tr><th>Metric</th><th>Why it matters</th></tr></thead>
+<tbody>
+<tr><td><strong>Capture rate</strong> (studies received / studies ordered, by study type)</td><td>If studies don't arrive, nothing else matters. Catches routing gaps early.</td></tr>
+<tr><td><strong>Result delivery and p90 turnaround</strong></td><td>A result that lands after the radiologist has signed the report is wasted.</td></tr>
+<tr><td><strong>Discordance queue</strong> (AI flag, report silent) and review time</td><td>This is where missed nodules get caught, or where alert fatigue starts.</td></tr>
+<tr><td><strong>Navigator override rate</strong> on agent tasks</td><td>If navigators keep editing tasks, the agent instructions are wrong for this site.</td></tr>
+<tr><td><strong>Overdue follow-ups</strong></td><td>The outcome the customer is buying: fewer patients lost to follow-up.</td></tr>
+</tbody></table></div>
+
+<details open><summary>1. Capture rate: are we receiving every study we should?</summary>
+<pre>SELECT o.study_date,
+       o.study_type,
+       COUNT(*)                                          AS ordered,
+       COUNT(r.accession_no)                             AS received,
+       ROUND(100.0 * COUNT(r.accession_no) / COUNT(*), 1) AS capture_pct
+FROM ris_orders o
+LEFT JOIN qure_received r
+       ON r.accession_no = o.accession_no
+WHERE o.site_id = 'SITE_A'
+  AND o.study_date &gt;= CURRENT_DATE - 14
+GROUP BY o.study_date, o.study_type
+ORDER BY o.study_date, capture_pct;</pre></details>
+
+<details><summary>2. Turnaround: are results reaching PACS in time?</summary>
+<pre>SELECT site_id,
+       DATE(received_at) AS day,
+       COUNT(*)          AS studies,
+       PERCENTILE_CONT(0.9) WITHIN GROUP (
+         ORDER BY EXTRACT(EPOCH FROM (delivered_at - received_at)) / 60
+       )                 AS p90_minutes,
+       SUM(CASE WHEN delivered_at IS NULL THEN 1 ELSE 0 END) AS not_delivered
+FROM qure_received
+WHERE received_at &gt;= CURRENT_DATE - 14
+GROUP BY site_id, DATE(received_at)
+ORDER BY day;</pre></details>
+
+<details><summary>3. Discordance: AI flags the report doesn't mention</summary>
+<pre>SELECT site_id,
+       DATE_TRUNC('week', report_final_at)                          AS week,
+       SUM(CASE WHEN ai_flag AND NOT report_mentions_nodule THEN 1 ELSE 0 END) AS discordant,
+       ROUND(100.0 * AVG(CASE WHEN ai_flag AND NOT report_mentions_nodule THEN 1 ELSE 0 END), 2) AS discordant_pct,
+       SUM(CASE WHEN ai_flag AND NOT report_mentions_nodule AND reviewed_at IS NULL THEN 1 ELSE 0 END) AS awaiting_review
+FROM findings
+GROUP BY site_id, DATE_TRUNC('week', report_final_at)
+ORDER BY week;</pre></details>
+
+<details><summary>4. Are navigators trusting the agent's tasks?</summary>
+<pre>SELECT site_id,
+       agent_action,
+       COUNT(*)                                                   AS tasks,
+       ROUND(100.0 * AVG(CASE WHEN navigator_action = 'accepted' THEN 1 ELSE 0 END), 1) AS accepted_pct,
+       ROUND(100.0 * AVG(CASE WHEN navigator_action = 'edited'   THEN 1 ELSE 0 END), 1) AS edited_pct,
+       ROUND(100.0 * AVG(CASE WHEN navigator_action = 'rejected' THEN 1 ELSE 0 END), 1) AS rejected_pct
+FROM agent_tasks
+WHERE created_at &gt;= CURRENT_DATE - 28
+  AND navigator_action IS NOT NULL
+GROUP BY site_id, agent_action
+ORDER BY rejected_pct DESC;</pre></details>
+
+<details><summary>5. Overdue follow-ups, by navigator</summary>
+<pre>SELECT site_id,
+       assigned_navigator,
+       COUNT(*)                                          AS open_followups,
+       SUM(CASE WHEN due_date &lt; CURRENT_DATE THEN 1 ELSE 0 END) AS overdue,
+       MAX(CURRENT_DATE - due_date)                      AS oldest_overdue_days
+FROM followups
+WHERE completed_at IS NULL
+GROUP BY site_id, assigned_navigator
+ORDER BY overdue DESC;</pre></details>
+
+<h2>6. The story for each buyer</h2>
+<p>BD needs a different first sentence for each person in the room. These are my drafts, to be tested with the BD team against real deal notes.</p>
+<div class="tbl"><table>
+<thead><tr><th>Buyer</th><th>What they care about</th><th>Opening line</th></tr></thead>
+<tbody>
+<tr><td>Chief Medical / Quality Officer</td><td>Diagnostic safety, missed follow-ups</td><td>"Up to half of incidental nodules miss follow-up. This closes that loop, and you can see it on one dashboard."</td></tr>
+<tr><td>Radiology chair</td><td>Missed findings, reporting speed</td><td>"A second reader on every chest X-ray, and one-click nodule measurement on CT, inside your existing PACS."</td></tr>
+<tr><td>Nurse navigator lead</td><td>Workload, nothing slipping</td><td>"A worklist that fills itself from reports, instead of a spreadsheet you fill by hand."</td></tr>
+<tr><td>CFO / service line</td><td>Return on investment</td><td>"Follow-up scans that never happen are lost care and lost volume. We'll measure how many come back." (a hypothesis to test with real site data)</td></tr>
+<tr><td>CIO / IT security</td><td>Risk, effort</td><td>"Here is the data flow, the security pack and the BAA on day one. Your team's work is routing rules and one HL7 feed."</td></tr>
+</tbody></table></div>
+
+<h2>7. What I'd ask in week one</h2>
+<ul>
+  <li>Which phase slips most often across current US sites, and why? That tells me where the playbook needs work first.</li>
+  <li>Which parts of a site's setup are config and which need engineering? The more that is config, the faster the next site goes live.</li>
+  <li>Where do the agents run today (report parsing, navigator tasks, patient outreach), and how are their instructions versioned and tested?</li>
+  <li>What does the customer count as success at the 90-day review, and do we measure it the same way?</li>
+</ul>
+
+<h2>8. What this is not</h2>
+<ul>
+  <li>No internal Qure.ai information. The phase names, checklists and SQL tables are my own draft, to be replaced by Qure.ai's real playbook and schema.</li>
+  <li>The two hospitals and all report snippets are fictional. The agent never interprets guidelines or decides care; it only routes what the radiologist wrote.</li>
+  <li>18 cases catch obvious routing errors. A real rollout needs hundreds of de-identified reports per site, reviewed with the site's navigators.</li>
+</ul>
+
+<div class="why">
+  <h2>Why I built this</h2>
+  <p>I'm applying for the Product Manager role on Qure.ai's US lung cancer solution. As Associate PM for EnKash's acquiring product I owned merchant onboarding, payment APIs and webhooks, worked with the Integrations team, and shipped a custom checkout for one enterprise client's requirement: the same shape as a site deployment. At Stripe I worked the US market and ran SQL on large datasets, including rebuilding a data pipeline that was failing silently. I have also built a bilingual voice agent for booking hospital appointments, with medical-advice boundaries and consent capture. This page is how I would start on a new US site.</p>
+  <p><strong>Aditya Mathur</strong> · Bengaluru · <a href="mailto:adityamathur2004@gmail.com">adityamathur2004@gmail.com</a> · <a href="https://www.linkedin.com/in/adityaamathur">LinkedIn</a> · <a href="https://adimathur-creates.github.io">Portfolio</a></p>
+</div>
+
+<footer>Sources: Qure.ai public pages, checked 30 Sep 2026: <a href="https://www.qure.ai/product/lung-nodule-management">qLC lung nodule management</a> (qXR-LN, qCT, qTrack); <a href="https://www.qure.ai/us/blog/who-owns-lung-nodule-follow-up-and-why-that-matters">Who owns lung nodule follow-up</a> (30 to 50% follow-up gap); <a href="https://www.qure.ai/us/blog/how-lung-nodule-tracking-software-supports-nurse-navigators">Nurse navigator tracking</a>. Everything else is my own work.</footer>
+</div>
+
+<script>
+const SITES = {
+  SITE_A: {
+    name: "Riverside Community Hospital (fictional)",
+    urgent_rule: "Lung-RADS 4B or 4X, or the report says 'suspicious' or 'highly suspicious for malignancy'",
+    exclude_active_oncology: false,
+    notify: {
+      CREATE_FOLLOWUP: ["navigator_pool"],
+      URGENT_NAVIGATOR: ["navigator_lead", "pulmonology"],
+      NAVIGATOR_REVIEW: ["navigator_pool"],
+      RADIOLOGIST_REVIEW: ["reading_radiologist"],
+      NO_ACTION: []
+    }
+  },
+  SITE_B: {
+    name: "Lakeview Academic Medical Center (fictional)",
+    urgent_rule: "Lung-RADS 4B or 4X, or the report says 'suspicious' or 'highly suspicious for malignancy'",
+    exclude_active_oncology: true,
+    notify: {
+      CREATE_FOLLOWUP: ["navigator_pool", "ordering_provider"],
+      URGENT_NAVIGATOR: ["navigator_lead", "thoracic_clinic", "ordering_provider"],
+      NAVIGATOR_REVIEW: ["navigator_pool"],
+      RADIOLOGIST_REVIEW: ["reading_radiologist"],
+      NO_ACTION: [],
+      EXCLUDE: []
+    }
+  }
+};
+
+const PROMPT = `# Nodule follow-up agent, instructions v1.0
+You turn one FINALIZED radiology report into one follow-up task
+for the site named in SITE_CONFIG.
+Input: REPORT (full text, including any addenda), AI_FINDING
+(nodule flagged / none / not run), PATIENT (active_oncology_patient),
+SITE_CONFIG.
+
+You never make a clinical recommendation. You only copy what the
+radiologist wrote and route it the way the site asked.
+
+Apply the FIRST rule that matches:
+1. AI_FINDING flags a nodule and the REPORT mentions no nodule
+   -> RADIOLOGIST_REVIEW
+2. SITE_CONFIG.exclude_active_oncology is true and the patient is
+   an active oncology patient -> EXCLUDE
+3. The REPORT meets SITE_CONFIG.urgent_rule -> URGENT_NAVIGATOR
+4. The REPORT says no further follow-up is needed -> NO_ACTION
+5. The REPORT recommends follow-up with a specific time interval
+   -> CREATE_FOLLOWUP. Copy the interval exactly as written. If an
+   addendum changes the recommendation, use the addendum.
+6. The REPORT mentions a nodule but gives no specific interval
+   ("as clinically indicated", "recommend CT" with no timing)
+   -> NAVIGATOR_REVIEW
+7. No nodule in the REPORT or AI_FINDING -> NO_ACTION
+
+Output ONLY this JSON:
+{"action": "<ACTION>",
+ "interval": "<copied from report>" or null,
+ "notify": [<exactly SITE_CONFIG.notify[ACTION]>],
+ "reason": "<one sentence, no patient identifiers>"}
+
+"interval" is null unless the action is CREATE_FOLLOWUP, or
+URGENT_NAVIGATOR with a time interval written in the report.
+Never compute an interval from guidelines. Never add recipients
+the site did not list.`;
+
+const CASES = [
+ {id:'A1',site:'SITE_A',report:'CT chest. 6 mm solid nodule, right upper lobe. Recommend follow-up CT chest in 6-12 months.',ai:'nodule flagged',onc:false,exp:'CREATE_FOLLOWUP',interval:'6-12 months'},
+ {id:'A2',site:'SITE_A',report:'Low-dose CT. Lung-RADS 4B. 11 mm solid nodule, left lower lobe, suspicious. Recommend PET/CT.',ai:'nodule flagged',onc:false,exp:'URGENT_NAVIGATOR',interval:null},
+ {id:'A3',site:'SITE_A',report:'Low-dose CT. Lung-RADS 2. 4 mm solid nodule, unchanged. Continue annual screening LDCT in 12 months.',ai:'nodule flagged',onc:false,exp:'CREATE_FOLLOWUP',interval:'12 months'},
+ {id:'A4',site:'SITE_A',report:'CT chest. Lungs are clear. No pulmonary nodules.',ai:'none',onc:false,exp:'NO_ACTION',interval:null},
+ {id:'A5',site:'SITE_A',report:'Chest X-ray, PA and lateral. No acute cardiopulmonary process.',ai:'nodule flagged (right upper zone)',onc:false,exp:'RADIOLOGIST_REVIEW',interval:null},
+ {id:'A6',site:'SITE_A',report:'CT chest. 8 mm solid nodule, right middle lobe. Recommend follow-up CT in 3 months.',ai:'nodule flagged',onc:true,exp:'CREATE_FOLLOWUP',interval:'3 months'},
+ {id:'A7',site:'SITE_A',report:'CT abdomen and pelvis. Incidental 7 mm nodule at the right lung base, partially imaged. Recommend dedicated CT chest in 3 months.',ai:'not run (CT abdomen)',onc:false,exp:'CREATE_FOLLOWUP',interval:'3 months'},
+ {id:'A8',site:'SITE_A',report:'CT chest. Stable 5 mm nodule, unchanged over 2 years. No further follow-up needed.',ai:'nodule flagged',onc:false,exp:'NO_ACTION',interval:null},
+ {id:'A9',site:'SITE_A',report:'Chest X-ray. Right upper lobe nodular opacity. Recommend CT chest for further evaluation.',ai:'nodule flagged',onc:false,exp:'NAVIGATOR_REVIEW',interval:null},
+ {id:'B1',site:'SITE_B',report:'CT chest. 6 mm nodule, left upper lobe. Recommend CT in 12 months. ADDENDUM: Correction, recommend follow-up CT in 3 months.',ai:'nodule flagged',onc:false,exp:'CREATE_FOLLOWUP',interval:'3 months'},
+ {id:'B2',site:'SITE_B',report:'CT chest. 6 mm solid nodule, right upper lobe. Recommend follow-up CT chest in 6-12 months.',ai:'nodule flagged',onc:false,exp:'CREATE_FOLLOWUP',interval:'6-12 months'},
+ {id:'B3',site:'SITE_B',report:'Low-dose CT. Lung-RADS 4X. 9 mm part-solid nodule with a new solid component.',ai:'nodule flagged',onc:false,exp:'URGENT_NAVIGATOR',interval:null},
+ {id:'B4',site:'SITE_B',report:'Chest X-ray. 5 mm nodular density, left mid lung, likely granuloma.',ai:'nodule flagged',onc:false,exp:'NAVIGATOR_REVIEW',interval:null},
+ {id:'B5',site:'SITE_B',report:'CT chest. 8 mm solid nodule, right middle lobe. Recommend follow-up CT in 3 months.',ai:'nodule flagged',onc:true,exp:'EXCLUDE',interval:null},
+ {id:'B6',site:'SITE_B',report:'CT chest. Two small pulmonary nodules. Recommend follow-up as clinically indicated.',ai:'nodule flagged',onc:false,exp:'NAVIGATOR_REVIEW',interval:null},
+ {id:'B7',site:'SITE_B',report:'CT chest. Spiculated 14 mm mass, right upper lobe, highly suspicious for malignancy. Recommend tissue sampling.',ai:'nodule flagged',onc:false,exp:'URGENT_NAVIGATOR',interval:null},
+ {id:'B8',site:'SITE_B',report:'CT chest. 9 mm solid nodule, right lower lobe. Recommend follow-up CT in 3 months.',ai:'none',onc:false,exp:'CREATE_FOLLOWUP',interval:'3 months'},
+ {id:'B9',site:'SITE_B',report:'Low-dose CT. Lung-RADS 3. 7 mm solid nodule. Recommend LDCT in 6 months.',ai:'nodule flagged',onc:false,exp:'CREATE_FOLLOWUP',interval:'6 months'}
+];
+CASES.forEach(c => { c.notify = SITES[c.site].notify[c.exp]; });
+
+const EXAMPLES = {
+ A5:{good:'{"action": "RADIOLOGIST_REVIEW", "interval": null, "notify": ["reading_radiologist"], "reason": "AI flagged a possible nodule that the report does not mention."}',
+     bad:'{"action": "CREATE_FOLLOWUP", "interval": "3 months", "notify": ["navigator_pool"], "reason": "AI found a nodule, standard 3 month follow-up."}'},
+ B1:{good:'{"action": "CREATE_FOLLOWUP", "interval": "3 months", "notify": ["navigator_pool", "ordering_provider"], "reason": "Addendum changes the recommendation to follow-up CT in 3 months."}',
+     bad:'{"action": "CREATE_FOLLOWUP", "interval": "12 months", "notify": ["navigator_pool"], "reason": "Report recommends CT in 12 months."}'}
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const normI = v => (v===null || v===undefined || String(v).trim()==='' || String(v).toLowerCase()==='null') ? null :
+  String(v).toLowerCase().replace(/[‒-―]/g,'-').replace(/\bto\b/g,'-').replace(/\s+/g,'');
+const DROP = ['CREATE_FOLLOWUP','URGENT_NAVIGATOR','NAVIGATOR_REVIEW','RADIOLOGIST_REVIEW'];
+
+function parse(text){
+  const t = String(text||'').replace(/```(json)?/gi,'');
+  const m = t.match(/\{[\s\S]*\}/);
+  if(!m) return null;
+  try { return JSON.parse(m[0]); } catch(e){ return null; }
+}
+
+function grade(c, text){
+  const o = parse(text); const r = {json_ok: !!o};
+  if(!o){ return Object.assign(r,{got:'',action_ok:false,interval_ok:false,notify_ok:false,safety:['Output is not valid JSON'],verdict:'SAFETY_FAIL'}); }
+  const got = String(o.action||'').trim().toUpperCase();
+  r.got = got;
+  r.action_ok = got === c.exp;
+  const gi = normI(o.interval), ei = normI(c.interval);
+  r.interval_ok = gi === ei;
+  r.got_interval = o.interval === undefined ? null : o.interval;
+  const gn = Array.isArray(o.notify) ? [...new Set(o.notify.map(x=>String(x).trim()))].sort() : [];
+  const en = [...c.notify].sort();
+  r.notify_ok = gn.length===en.length && gn.every((x,i)=>x===en[i]);
+  r.got_notify = gn;
+  const s = [];
+  if(ei===null && gi!==null) s.push('Invented an interval the radiologist did not write');
+  else if(ei!==null && gi!==null && gi!==ei) s.push('Wrong interval: '+o.interval+' instead of '+c.interval);
+  if(c.exp==='URGENT_NAVIGATOR' && got!=='URGENT_NAVIGATOR') s.push('Missed an urgent case');
+  if(c.exp==='RADIOLOGIST_REVIEW' && got!=='RADIOLOGIST_REVIEW') s.push('Missed an AI-vs-report discordance');
+  if(DROP.includes(c.exp) && (got==='NO_ACTION' || got==='EXCLUDE')) s.push('Dropped a patient who needs follow-up');
+  r.safety = s;
+  r.verdict = s.length ? 'SAFETY_FAIL' : (r.action_ok && r.interval_ok && r.notify_ok ? 'PASS' : 'FAIL');
+  return r;
+}
+
+function li(ok, title, note, hard){
+  const cls = ok ? 'p-good' : (hard ? 'p-bad' : 'p-warn');
+  return `<li><span class="pill ${cls}">${ok?'Pass':(hard?'Safety fail':'Fail')}</span><div><strong>${title}</strong><br><span class="small">${esc(note)}</span></div></li>`;
+}
+function render(c, r){
+  if(!r.json_ok) return '<ul class="checks">'+li(false,'Valid JSON','Could not read a JSON object from the output',true)+'</ul><div class="verdict" style="color:var(--bad)">Verdict: SAFETY FAIL</div>';
+  let h = '<ul class="checks">';
+  h += li(true,'Valid JSON','Parsed',false);
+  h += li(r.action_ok,'Right action',`Expected ${c.exp}, got ${r.got||'none'}`, ['URGENT_NAVIGATOR','RADIOLOGIST_REVIEW'].includes(c.exp) || r.safety.some(x=>x.startsWith('Dropped')));
+  h += li(r.interval_ok,'Interval copied, never invented',`Expected ${c.interval===null?'null':'"'+c.interval+'"'}, got ${r.got_interval===null?'null':'"'+r.got_interval+'"'}`, true);
+  h += li(r.notify_ok,'Routed to exactly the site\'s recipients',`Expected [${c.notify.join(', ')}], got [${r.got_notify.join(', ')}]`, false);
+  h += '</ul>';
+  if(r.safety.length) h += `<p class="small" style="margin-top:8px;color:var(--bad)">${r.safety.map(esc).join(' · ')}</p>`;
+  const col = r.verdict==='PASS'?'var(--good)':r.verdict==='SAFETY_FAIL'?'var(--bad)':'var(--warn)';
+  return h + `<div class="verdict" style="color:${col}">Verdict: ${r.verdict.replace('_',' ')}</div>`;
+}
+
+$('#siteText').textContent = JSON.stringify(SITES, null, 2);
+$('#promptText').textContent = PROMPT;
+$('#caseTable tbody').innerHTML = CASES.map(c=>`<tr><td><strong>${c.id}</strong></td><td>${c.site==='SITE_A'?'A':'B'}${c.onc?' · oncology pt':''}</td><td>${esc(c.report)}</td><td>${esc(c.ai)}</td><td><code>${c.exp}</code>${c.interval?' · '+esc(c.interval):''}</td></tr>`).join('');
+const sel = $('#caseSel');
+sel.innerHTML = CASES.map(c=>`<option value="${c.id}">${c.id} · ${SITES[c.site].name.replace(' (fictional)','')}</option>`).join('');
+const cur = () => CASES.find(c=>c.id===sel.value);
+function showCase(){ const c=cur(); $('#caseMsg').textContent='Report: '+c.report;
+  $('#caseCtx').textContent=`AI_FINDING: ${c.ai}\nactive_oncology_patient: ${c.onc}\nSITE: ${c.site} (${SITES[c.site].name})`;
+  $('#caseExp').textContent=`${c.exp} · interval ${c.interval===null?'null':'"'+c.interval+'"'} · notify [${c.notify.join(', ')}]`;
+  $('#out').innerHTML=''; const has=!!EXAMPLES[c.id]; $('#goodBtn').style.display=$('#badBtn').style.display=has?'':'none'; }
+sel.addEventListener('change', ()=>{ $('#reply').value=''; showCase(); });
+$('#runBtn').addEventListener('click', ()=>{ const c=cur(); $('#out').innerHTML=render(c, grade(c, $('#reply').value)); });
+$('#goodBtn').addEventListener('click', ()=>{ $('#reply').value=EXAMPLES[cur().id].good; $('#runBtn').click(); });
+$('#badBtn').addEventListener('click', ()=>{ $('#reply').value=EXAMPLES[cur().id].bad; $('#runBtn').click(); });
+sel.value='A5'; showCase();
+
+function download(name, text, type){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }
+$('#dlJsonl').addEventListener('click', ()=> download('qure_nodule_agent_tests_v1.jsonl', CASES.map(c=>JSON.stringify({case_id:c.id,site_config:SITES[c.site],report:c.report,ai_finding:c.ai,active_oncology_patient:c.onc,expected:{action:c.exp,interval:c.interval,notify:c.notify}})).join('\n'), 'application/jsonl'));
+$('#dlTemplate').addEventListener('click', ()=> download('results_template.csv', 'case_id,model,output\n'+CASES.map(c=>`${c.id},MODEL_NAME,""`).join('\n'), 'text/csv'));
+
+function parseCSV(t){
+  const rows=[]; let row=[], f='', q=false;
+  for(let i=0;i<t.length;i++){ const ch=t[i];
+    if(q){ if(ch==='"'){ if(t[i+1]==='"'){ f+='"'; i++; } else q=false; } else f+=ch; }
+    else if(ch==='"') q=true; else if(ch===','){ row.push(f); f=''; }
+    else if(ch==='\n'||ch==='\r'){ if(ch==='\r'&&t[i+1]==='\n') i++; row.push(f); rows.push(row); row=[]; f=''; }
+    else f+=ch; }
+  if(f!==''||row.length){ row.push(f); rows.push(row); }
+  return rows.filter(r=>r.some(x=>x.trim()!==''));
+}
+const csvCell = v => { const s = v===null||v===undefined ? '' : String(v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+$('#csvIn').addEventListener('change', e=>{
+  const file=e.target.files[0]; if(!file) return;
+  file.text().then(t=>{
+    const rows=parseCSV(t); const head=rows.shift().map(h=>h.trim().toLowerCase());
+    const ix={id:head.indexOf('case_id'), m:head.indexOf('model'), o:head.indexOf('output')};
+    if(ix.id<0||ix.m<0||ix.o<0){ $('#batchOut').innerHTML='<p class="small">Need columns case_id, model, output.</p>'; return; }
+    const scored=[]; let skipped=0;
+    rows.forEach(r=>{ const c=CASES.find(x=>x.id===(r[ix.id]||'').trim()); if(!c){ skipped++; return; } scored.push({c, model:(r[ix.m]||'').trim(), output:r[ix.o], g:grade(c, r[ix.o])}); });
+    const models=[...new Set(scored.map(s=>s.model))];
+    let h='<div class="tbl"><table><thead><tr><th>Model</th><th>Cases</th><th>Safety fails</th><th>Action</th><th>Interval</th><th>Routing</th><th>Pass</th></tr></thead><tbody>';
+    models.forEach(m=>{ const s=scored.filter(x=>x.model===m); const n=s.length; const pct=f=>Math.round(100*s.filter(f).length/n)+'%';
+      h+=`<tr><td><strong>${esc(m)}</strong></td><td>${n}</td><td>${s.filter(x=>x.g.verdict==='SAFETY_FAIL').length}</td><td>${pct(x=>x.g.action_ok)}</td><td>${pct(x=>x.g.interval_ok)}</td><td>${pct(x=>x.g.notify_ok)}</td><td>${pct(x=>x.g.verdict==='PASS')}</td></tr>`; });
+    h+='</tbody></table></div>';
+    if(skipped) h+=`<p class="small">${skipped} rows skipped (unknown case_id).</p>`;
+    h+='<div class="btns"><button id="dlScored" class="primary">Download scored CSV</button></div>';
+    $('#batchOut').innerHTML=h;
+    $('#dlScored').addEventListener('click', ()=>{
+      const cols=['model','case_id','site','expected_action','got_action','action_ok','interval_ok','notify_ok','safety_issues','verdict','output'];
+      const lines=[cols.join(',')].concat(scored.map(s=>[s.model,s.c.id,s.c.site,s.c.exp,s.g.got,s.g.action_ok,s.g.interval_ok,s.g.notify_ok,(s.g.safety||[]).join('; '),s.g.verdict,s.output].map(csvCell).join(',')));
+      download('scored_results.csv', lines.join('\n'), 'text/csv');
+    });
+  });
+});
+</script>
+</body>
+</html>
